@@ -1,0 +1,55 @@
+baseURL = "https://chrisblog.com"
+languageCode = "zh-cn"
+title = "Chris 的博客"
+theme = "PaperMod"
+[pagination]
+  pagerSize = 10
+enableRobotsTXT = true
+
+[params]
+  description = "Chris 的个人博客 - 技术分享 & 项目展示"
+  author = "Chris"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+
+  [params.homeInfoParams]
+    Title = "你好，我是 Chris 👋"
+    Content = "欢迎来到我的小站！这里记录我的技术探索、项目实践和一些胡思乱想。"
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/"
+
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:hello@chrisblog.com"
+
+[[menu.main]]
+  identifier = "posts"
+  name = "文章"
+  url = "/posts/"
+  weight = 1
+
+[[menu.main]]
+  identifier = "projects"
+  name = "项目"
+  url = "/projects/"
+  weight = 2
+
+[[menu.main]]
+  identifier = "about"
+  name = "关于"
+  url = "/about/"
+  weight = 3
+
+[[menu.main]]
+  identifier = "search"
+  name = "搜索"
+  url = "/search/"
+  weight = 4
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]

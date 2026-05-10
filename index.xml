@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Chris 的博客</title><link>https://mrzhangyingjian.github.io/myblog/</link><description>Recent content on Chris 的博客</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sat, 09 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://mrzhangyingjian.github.io/myblog/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello World！</title><link>https://mrzhangyingjian.github.io/myblog/posts/hello-world/</link><pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate><guid>https://mrzhangyingjian.github.io/myblog/posts/hello-world/</guid><description>我的第一篇博客</description></item><item><title>关于我</title><link>https://mrzhangyingjian.github.io/myblog/about/</link><pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate><guid>https://mrzhangyingjian.github.io/myblog/about/</guid><description>&lt;h2 id="-你好">👋 你好！&lt;/h2>
+&lt;p>我是 &lt;strong>Chris&lt;/strong>，一个热爱技术的工程师。&lt;/p>
+&lt;h3 id="我玩的东西">我玩的东西&lt;/h3>
+&lt;ul>
+&lt;li>🤖 &lt;strong>Jetson Orin Nano&lt;/strong> — 边缘计算、AI 推理&lt;/li>
+&lt;li>🖥️ &lt;strong>前后端开发&lt;/strong> — 折腾各种项目&lt;/li>
+&lt;li>🧠 &lt;strong>AI / LLM&lt;/strong> — 大模型应用&lt;/li>
+&lt;/ul>
+&lt;h3 id="联系我">联系我&lt;/h3>
+&lt;ul>
+&lt;li>GitHub: &lt;a href="https://github.com/">github.com/chris&lt;/a>&lt;/li>
+&lt;li>Email: &lt;a href="mailto:hello@chrisblog.com">hello@chrisblog.com&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>我的项目</title><link>https://mrzhangyingjian.github.io/myblog/projects/</link><pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate><guid>https://mrzhangyingjian.github.io/myblog/projects/</guid><description>&lt;h2 id="-项目列表">🛠️ 项目列表&lt;/h2>
+&lt;h3 id="1-家庭服务器项目-">1. 家庭服务器项目 🖥️&lt;/h3>
+&lt;p>用 Jetson Orin Nano 搭建的家庭服务器，跑了 OpenClaw 智能助手、个人博客和文件共享服务。&lt;/p>
+&lt;h3 id="2-ai-助手-">2. AI 助手 🤖&lt;/h3>
+&lt;p>基于 OpenClaw 框架的 AI 个人助手，支持微信和 Telegram 聊天。&lt;/p>
+&lt;blockquote>
+&lt;p>更多项目陆续更新中&amp;hellip;&lt;/p>&lt;/blockquote></description></item></channel></rss>

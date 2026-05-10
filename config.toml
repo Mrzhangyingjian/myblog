@@ -1,4 +1,4 @@
-baseURL = "https://chrisblog.com"
+baseURL = "https://mrzhangyingjian.github.io/myblog/"
 languageCode = "zh-cn"
 title = "Chris 的博客"
 theme = "PaperMod"

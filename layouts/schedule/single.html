@@ -1,0 +1,91 @@
+{{ define "main" }}
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+  </header>
+
+  <div class="post-content">
+    {{ $content := .RawContent }}
+    {{ $lines := split $content "\n" }}
+
+    {{ range $i, $line := $lines }}
+      {{ if eq $line "## 📋 待办事项" }}
+        <h2>📋 待办事项</h2>
+        <div id="todo-list">
+      {{ else if eq $line "---" }}
+        </div>
+        <hr>
+      {{ else if eq $line "## 📅 日程安排" }}
+        </div>
+        <h2>📅 日程安排</h2>
+      {{ else if eq $line "## ✅ 已完成" }}
+        </div>
+        <h2>✅ 已完成</h2>
+      {{ else if or (hasPrefix $line "- [ ] ") (hasPrefix $line "- [x] ") }}
+        {{ if hasPrefix $line "- [ ] " }}
+          {{ $text := trim (strings.TrimPrefix "- [ ] " $line) " \r" }}
+          <div class="todo-item unchecked" data-todo="{{ $text }}">
+            <span class="todo-checkbox">☐</span>
+            <span class="todo-text">{{ $text }}</span>
+          </div>
+        {{ else }}
+          {{ $text := trim (strings.TrimPrefix "- [x] " $line) " \r" }}
+          <div class="todo-item checked" data-todo="{{ $text }}">
+            <span class="todo-checkbox">☑</span>
+            <span class="todo-text" style="text-decoration:line-through;color:var(--secondary);">{{ $text }}</span>
+          </div>
+        {{ end }}
+      {{ else if $line }}
+        {{ $line | $.RenderString }}
+      {{ end }}
+    {{ end }}
+  </div>
+</article>
+
+<style>
+.todo-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; margin: 4px 0; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+.todo-item:hover { background: var(--tertiary); }
+.todo-checkbox { font-size: 1.2em; user-select: none; }
+.todo-item.checked .todo-checkbox { color: #2ecc71; }
+.todo-item.unchecked .todo-checkbox { color: var(--secondary); }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var items = document.querySelectorAll('.todo-item');
+  items.forEach(function(item) {
+    var key = 'todo_' + encodeURIComponent(item.dataset.todo);
+    var saved = localStorage.getItem(key);
+    
+    if (saved === 'checked') {
+      item.classList.remove('unchecked');
+      item.classList.add('checked');
+      item.querySelector('.todo-checkbox').textContent = '☑';
+      item.querySelector('.todo-text').style.textDecoration = 'line-through';
+      item.querySelector('.todo-text').style.color = 'var(--secondary)';
+    }
+    
+    item.addEventListener('click', function() {
+      var isChecked = this.classList.contains('checked');
+      var txt = this.querySelector('.todo-text');
+      var box = this.querySelector('.todo-checkbox');
+      if (isChecked) {
+        this.classList.remove('checked');
+        this.classList.add('unchecked');
+        box.textContent = '☐';
+        txt.style.textDecoration = '';
+        txt.style.color = '';
+        localStorage.removeItem(key);
+      } else {
+        this.classList.remove('unchecked');
+        this.classList.add('checked');
+        box.textContent = '☑';
+        txt.style.textDecoration = 'line-through';
+        txt.style.color = 'var(--secondary)';
+        localStorage.setItem(key, 'checked');
+      }
+    });
+  });
+});
+</script>
+{{ end }}

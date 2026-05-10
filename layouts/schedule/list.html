@@ -5,49 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ .Title }}</title>
   <style>
-  .calendar-wrap { max-width: 960px; margin: 0 auto; }
-  .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 4px; }
-  .calendar-header h2 { margin: 0; font-size: 1.5em; }
-  table.calendar { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  table.calendar th { padding: 10px 0; font-weight: bold; font-size: 0.85em; color: var(--secondary); text-align: center; }
-  table.calendar td { border: 1px solid var(--border); vertical-align: top; padding: 4px; height: 90px; width: 14.28%; cursor: pointer; transition: background 0.15s; position: relative; }
-  table.calendar td:hover { background: var(--tertiary); }
-  table.calendar td.other-month { opacity: 0.2; pointer-events: none; }
-  table.calendar td.today { border-color: var(--primary); border-width: 2px; }
-  table.calendar td .date-num { font-size: 0.8em; font-weight: 600; color: var(--secondary); padding: 2px; }
-  table.calendar td.today .date-num { color: var(--primary); }
-  table.calendar td .event-dot { font-size: 0.65em; padding: 1px 4px; margin: 2px 0; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; color: #fff; }
-  .event-dot.考试 { background: #e74c3c; }
-  .event-dot.会议 { background: #3498db; }
-  .event-dot.约会 { background: #9b59b6; }
-  .event-dot.提醒 { background: #f39c12; }
-  .event-dot.其他 { background: #2ecc71; }
-  #day-detail { margin-top: 24px; border: 1px solid var(--border); border-radius: 10px; padding: 20px; background: var(--entry); display: none; }
-  #day-detail .day-title { font-size: 1.2em; font-weight: bold; margin-bottom: 12px; }
-  #day-detail .detail-event { padding: 12px 0; border-bottom: 1px solid var(--border); }
-  #day-detail .detail-event:last-child { border-bottom: none; }
-  #day-detail .detail-event .time { font-size: 0.85em; color: var(--secondary); }
-  #day-detail .detail-event .title { font-size: 1.05em; font-weight: 600; margin: 4px 0; }
-  #day-detail .detail-event .meta { font-size: 0.85em; color: var(--secondary); }
-  .all-upcoming { margin-top: 32px; }
-  .all-upcoming h3 { font-size: 1.1em; margin-bottom: 10px; }
-  .upcoming-list { display: flex; flex-direction: column; gap: 8px; }
-  .upcoming-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--entry); cursor: pointer; }
-  .upcoming-item:hover { background: var(--tertiary); }
-  .upcoming-item .date-badge { display: flex; flex-direction: column; align-items: center; min-width: 48px; }
-  .upcoming-item .date-badge .md { font-size: 1.1em; font-weight: bold; }
-  .upcoming-item .date-badge .wday { font-size: 0.7em; color: var(--secondary); }
-  .upcoming-item .info { flex: 1; }
-  .upcoming-item .info .etitle { font-weight: 600; }
-  .upcoming-item .info .emeta { font-size: 0.8em; color: var(--secondary); margin-top: 2px; }
-  .upcoming-item .type-badge { font-size: 0.75em; padding: 2px 8px; border-radius: 10px; color: #fff; white-space: nowrap; }
-  /* 隐藏干扰元素 */
-  .breadcrumbs, .page-header svg, .top-link, .scroll-to-top { display: none !important; }
-  @media (max-width: 600px) {
-    table.calendar td { height: 60px; padding: 2px; font-size: 0.8em; }
-    table.calendar td .event-dot { font-size: 0.55em; }
-    .upcoming-item { flex-wrap: wrap; }
-  }
+    /* 隐藏干扰元素 */
+    .breadcrumbs, .page-header svg, .top-link, .scroll-to-top { display: none !important; }
+    .schedule-wrap { max-width: 800px; margin: 0 auto; }
+    .schedule-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .schedule-table th { background: var(--theme); padding: 12px 10px; text-align: left; font-weight: bold; border-bottom: 2px solid var(--border); }
+    .schedule-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .schedule-table tr:hover { background: var(--tertiary); }
+    .schedule-table .tag { display: inline-block; font-size: 0.75em; padding: 2px 8px; border-radius: 8px; color: #fff; }
+    .tag.考试 { background: #e74c3c; }
+    .tag.会议 { background: #3498db; }
+    .tag.约会 { background: #9b59b6; }
+    .tag.提醒 { background: #f39c12; }
+    .tag.其他 { background: #2ecc71; }
+    .schedule-intro { color: var(--secondary); margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -55,139 +26,30 @@
     <h1>{{ .Title }}</h1>
   </header>
 
-  {{ $now := now }}
-  {{ $cm := int $now.Month }}
-  {{ $cy := $now.Year }}
-  {{ $td := $now.Day }}
+  <div class="schedule-wrap">
+    <p class="schedule-intro">这里记录我的日程安排，随时更新～</p>
 
-  {{ $fom := time (printf "%d-%02d-01" $cy $cm) }}
-  {{ $wd := int $fom.Weekday }}
-  {{ $dim := 31 }}
-  {{ if in (slice 4 6 9 11) $cm }}{{ $dim = 30 }}
-  {{ else if eq $cm 2 }}
-    {{ if and (eq (mod $cy 4) 0) (or (ne (mod $cy 100) 0) (eq (mod $cy 400) 0)) }}{{ $dim = 29 }}
-    {{ else }}{{ $dim = 28 }}{{ end }}
-  {{ end }}
-
-  {{ $prevDim := 31 }}
-  {{ $pm := sub $cm 1 }}{{ if eq $pm 0 }}{{ $pm = 12 }}{{ end }}
-  {{ if in (slice 4 6 9 11) $pm }}{{ $prevDim = 30 }}
-  {{ else if eq $pm 2 }}{{ $prevDim = 28 }}{{ end }}
-
-  {{ if eq $wd 0 }}{{ $wd = 7 }}{{ end }}
-
-  <div class="calendar-wrap">
-    <div class="calendar-header">
-      <span></span>
-      <h2>{{ $cy }} 年 {{ $cm }} 月</h2>
-      <span></span>
-    </div>
-
-    <table class="calendar">
-      <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
-      {{ range $r := seq 0 5 }}
-      <tr>
-        {{ range $c := seq 1 7 }}
-          {{ $idx := add (mul $r 7) $c }}
-          {{ $dn := sub $idx $wd }}
-
-          {{ $cls := "day" }}
-          {{ $disp := $dn }}
-          {{ if lt $dn 1 }}
-            {{ $cls = "day other-month" }}
-            {{ $disp = add $prevDim $dn }}
-          {{ else if gt $dn $dim }}
-            {{ $cls = "day other-month" }}
-            {{ $disp = sub $dn $dim }}
-          {{ else if eq $dn $td }}
-            {{ $cls = "day today" }}
-          {{ end }}
-
-          <td class="{{ $cls }}" data-d="{{ $disp }}" data-m="{{ $cm }}" data-y="{{ $cy }}" onclick="sd(this)">
-            <div class="date-num">{{ $disp }}</div>
-            <div class="day-events">
-              {{ $ds := printf "%d-%d-%d" $cy $cm $dn }}
-              {{ range where $.Site.RegularPages "Section" "schedule" }}
-                {{ $ed := .Date.Format "2006-1-2" }}
-                {{ if eq $ed $ds }}
-                  <div class="event-dot {{ .Params.type | default "其他" }}">{{ .Params.startTime }} {{ .Title }}</div>
-                {{ end }}
-              {{ end }}
-            </div>
-          </td>
-        {{ end }}
-      </tr>
+    <h3>📋 即将到来</h3>
+    <table class="schedule-table">
+      <tr><th>日期</th><th>时间</th><th>事件</th><th>地点</th></tr>
+      {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
+        <tr>
+          <td>{{ .Date.Format "01-02" }}</td>
+          <td>{{ .Params.startTime }}-{{ .Params.endTime }}</td>
+          <td><span class="tag {{ .Params.type | default "其他" }}">{{ .Params.type | default "其他" }}</span> {{ .Title }}</td>
+          <td>{{ with .Params.location }}{{ . }}{{ else }}-{{ end }}</td>
+        </tr>
+      {{ else }}
+        <tr><td colspan="4" style="text-align:center;color:var(--secondary);">暂无安排 ✅</td></tr>
       {{ end }}
     </table>
 
-    <div id="day-detail">
-      <div class="day-title" id="dt"></div>
-      <div id="dc"></div>
-    </div>
-
-    <div class="all-upcoming">
-      <h3>📋 所有即将到来的安排</h3>
-      <div class="upcoming-list">
-        {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
-          <div class="upcoming-item" onclick="sd2('{{ .Date.Format "2006-1-2" }}')">
-            <div class="date-badge">
-              <span class="md">{{ .Date.Format "01-02" }}</span>
-              <span class="wday">{{ .Date.Format "Mon" }}</span>
-            </div>
-            <span class="type-badge {{ .Params.type | default "其他" }}">{{ .Params.type | default "其他" }}</span>
-            <div class="info">
-              <div class="etitle">{{ .Title }}</div>
-              <div class="emeta">{{ .Params.startTime }}-{{ .Params.endTime }}{{ with .Params.location }}📍 {{ . }}{{ end }}</div>
-            </div>
-          </div>
-        {{ else }}
-          <p style="color:var(--secondary);">暂无安排 ✅</p>
-        {{ end }}
-      </div>
-    </div>
+    <h3 style="margin-top: 32px;">✅ 已完成</h3>
+    <table class="schedule-table">
+      <tr><th>日期</th><th>时间</th><th>事件</th><th>地点</th></tr>
+      <tr><td colspan="4" style="text-align:center;color:var(--secondary);">暂无 ✅</td></tr>
+    </table>
   </div>
-
-  <script>
-  const ev = {
-    {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
-      "{{ .Date.Format "2006-1-2" }}": {
-        t: "{{ .Title }}", s: "{{ .Params.startTime }}", e: "{{ .Params.endTime }}",
-        tp: "{{ .Params.type }}", l: "{{ .Params.location }}",
-        c: {{ .Content | jsonify }}
-      },
-    {{ end }}
-  };
-
-  function sd(el) {
-    const d = el.dataset.d, m = el.dataset.m, y = el.dataset.y;
-    const key = y + '-' + m + '-' + d;
-    document.getElementById('dt').textContent = '📅 ' + y + '年' + m + '月' + d + '日';
-    const c = document.getElementById('dc');
-    if (ev[key]) {
-      const e = ev[key];
-      c.innerHTML = '<div class="detail-event"><div class="time">🕐 ' + e.s + ' - ' + e.e + '</div>' +
-        '<div class="title">' + e.t + '</div><div class="meta">🏷️ ' + e.tp + (e.l ? ' · 📍 ' + e.l : '') + '</div>' +
-        '<div style="margin-top:8px;font-size:0.9em;">' + e.c + '</div></div>';
-    } else {
-      c.innerHTML = '<p style="color:var(--secondary);">这一天暂无安排 ✅</p>';
-    }
-    document.getElementById('day-detail').style.display = 'block';
-    document.getElementById('day-detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function sd2(dateStr) {
-    const cells = document.querySelectorAll('td.day:not(.other-month)');
-    for (const cell of cells) {
-      if (cell.dataset.y + '-' + cell.dataset.m + '-' + cell.dataset.d === dateStr) {
-        cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        cell.style.background = 'var(--tertiary)';
-        setTimeout(() => cell.style.background = '', 1500);
-        sd(cell);
-        return;
-      }
-    }
-  }
-  </script>
 
   {{ partial "footer.html" . }}
 </body>

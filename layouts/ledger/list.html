@@ -7,6 +7,6 @@
 </div>
 <script>
   // 共享账本数据（我给老公记的账）
-  const SHARED_JSON = {{ .Site.Data.ledger | jsonify }};
+  const SHARED_JSON = {{ .Site.Data.ledger | jsonify | safeJS }};
 </script>
 {{ end }}

@@ -1,46 +1,64 @@
-{{ define "main" }}
-<article class="post-single">
-  <header class="post-header">
-    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
-  </header>
+{{- define "main" }}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
 
-  <div class="post-content">
-    {{ $content := .RawContent }}
-    {{ $lines := split $content "\n" }}
+<div class="post-content">
+  {{ $raw := .RawContent }}
+  {{ $before := "" }}
+  {{ $todo := "" }}
+  {{ $after := "" }}
 
-    {{ range $i, $line := $lines }}
-      {{ if eq $line "## 📋 待办事项" }}
-        <h2>📋 待办事项</h2>
-        <div id="todo-list">
-      {{ else if eq $line "---" }}
-        </div>
-        <hr>
-      {{ else if eq $line "## 📅 日程安排" }}
-        </div>
-        <h2>📅 日程安排</h2>
-      {{ else if eq $line "## ✅ 已完成" }}
-        </div>
-        <h2>✅ 已完成</h2>
-      {{ else if or (hasPrefix $line "- [ ] ") (hasPrefix $line "- [x] ") }}
-        {{ if hasPrefix $line "- [ ] " }}
-          {{ $text := trim (strings.TrimPrefix "- [ ] " $line) " \r" }}
-          <div class="todo-item unchecked" data-todo="{{ $text }}">
-            <span class="todo-checkbox">☐</span>
-            <span class="todo-text">{{ $text }}</span>
-          </div>
-        {{ else }}
-          {{ $text := trim (strings.TrimPrefix "- [x] " $line) " \r" }}
-          <div class="todo-item checked" data-todo="{{ $text }}">
-            <span class="todo-checkbox">☑</span>
-            <span class="todo-text" style="text-decoration:line-through;color:var(--secondary);">{{ $text }}</span>
-          </div>
-        {{ end }}
-      {{ else if $line }}
-        {{ $line | $.RenderString }}
+  {{ if strings.Contains $raw "## 📋 待办事项" }}
+    {{ $parts := split $raw "## 📋 待办事项" }}
+    {{ $before = index $parts 0 }}
+    
+    {{ if gt (len $parts) 1 }}
+      {{ $rest := index $parts 1 }}
+      {{ $restParts := split $rest "---" }}
+      {{ if gt (len $restParts) 1 }}
+        {{ $todo = index $restParts 0 }}
+        {{ $afterRest := after 1 $restParts }}
+        {{ $after = delimit $afterRest "---" }}
+      {{ else }}
+        {{ $todo = $rest }}
       {{ end }}
     {{ end }}
-  </div>
-</article>
+  {{ end }}
+
+  {{ if $todo }}
+    {{ $before | $.RenderString }}
+
+    <h2>📋 待办事项</h2>
+    <div id="todo-list">
+    {{ range (split $todo "\n") }}
+      {{ $line := trim . " \r" }}
+      {{ if hasPrefix $line "- [ ] " }}
+        {{ $text := strings.TrimPrefix "- [ ] " $line }}
+        <div class="todo-item unchecked" data-todo="{{ $text }}">
+          <span class="todo-checkbox">☐</span>
+          <span class="todo-text">{{ $text }}</span>
+        </div>
+      {{ else if hasPrefix $line "- [x] " }}
+        {{ $text := strings.TrimPrefix "- [x] " $line }}
+        <div class="todo-item checked" data-todo="{{ $text }}">
+          <span class="todo-checkbox">☑</span>
+          <span class="todo-text" style="text-decoration:line-through;color:var(--secondary);">{{ $text }}</span>
+        </div>
+      {{ else if $line }}
+        <p style="margin:4px 0;">{{ $line }}</p>
+      {{ end }}
+    {{ end }}
+    </div>
+
+    {{ if $after }}
+      <hr>
+      {{ $after | $.RenderString }}
+    {{ end }}
+  {{ else }}
+    {{ .Content }}
+  {{ end }}
+</div>
 
 <style>
 .todo-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; margin: 4px 0; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
@@ -56,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
   items.forEach(function(item) {
     var key = 'todo_' + encodeURIComponent(item.dataset.todo);
     var saved = localStorage.getItem(key);
-    
     if (saved === 'checked') {
       item.classList.remove('unchecked');
       item.classList.add('checked');
@@ -64,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
       item.querySelector('.todo-text').style.textDecoration = 'line-through';
       item.querySelector('.todo-text').style.color = 'var(--secondary)';
     }
-    
     item.addEventListener('click', function() {
       var isChecked = this.classList.contains('checked');
       var txt = this.querySelector('.todo-text');
@@ -88,4 +104,4 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
-{{ end }}
+{{- end }}

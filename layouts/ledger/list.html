@@ -1,0 +1,12 @@
+{{ define "main" }}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
+<div class="post-content">
+  {{ .Content }}
+</div>
+<script>
+  // 共享账本数据（我给老公记的账）
+  const SHARED_JSON = {{ .Site.Data.ledger | jsonify }};
+</script>
+{{ end }}

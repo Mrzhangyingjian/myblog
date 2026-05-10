@@ -52,10 +52,16 @@ enableRobotsTXT = true
   weight = 4
 
 [[menu.main]]
+  identifier = "ledger"
+  name = "账本"
+  url = "/ledger/"
+  weight = 5
+
+[[menu.main]]
   identifier = "search"
   name = "搜索"
   url = "/search/"
-  weight = 5
+  weight = 6
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]

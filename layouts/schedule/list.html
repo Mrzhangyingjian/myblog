@@ -5,30 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ .Title }}</title>
   <style>
-    .calendar-page { max-width: 900px; margin: 0 auto; padding: 20px; }
-    .calendar-header { text-align: center; margin-bottom: 20px; }
-    .calendar-header h2 { margin: 0; font-size: 1.8em; }
-    .calendar-header .month-nav { display: flex; justify-content: space-between; align-items: center; max-width: 400px; margin: 10px auto; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .calendar-grid .day-name { text-align: center; font-weight: bold; padding: 8px; background: var(--theme); color: var(--primary); font-size: 0.85em; }
-    .calendar-grid .day { min-height: 80px; border: 1px solid var(--border); border-radius: 6px; padding: 4px; background: var(--entry); position: relative; }
-    .calendar-grid .day .date-num { font-size: 0.8em; color: var(--secondary); padding: 2px 4px; }
-    .calendar-grid .day.other-month { opacity: 0.3; }
-    .calendar-grid .day.today { border-color: var(--primary); border-width: 2px; }
-    .event-item { font-size: 0.7em; padding: 2px 4px; margin: 2px 0; border-radius: 3px; cursor: default; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .event-item.考试 { background: #e74c3c; color: #fff; }
-    .event-item.会议 { background: #3498db; color: #fff; }
-    .event-item.约会 { background: #9b59b6; color: #fff; }
-    .event-item.提醒 { background: #f39c12; color: #fff; }
-    .event-item.其他 { background: #2ecc71; color: #fff; }
-    .event-detail { margin-top: 30px; }
-    .event-detail h3 { margin-bottom: 10px; }
-    .event-card { border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; background: var(--entry); }
-    .event-card .time { color: var(--secondary); font-size: 0.85em; }
-    .event-card .title { font-size: 1.1em; font-weight: bold; }
-    .event-card .meta { font-size: 0.85em; color: var(--secondary); margin-top: 4px; }
-    @media (max-width: 600px) { .calendar-grid .day { min-height: 60px; } }
-  </style>
+.calendar-wrap { max-width: 960px; margin: 0 auto; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 4px; }
+.calendar-header h2 { margin: 0; font-size: 1.5em; }
+.calendar-header .nav-btn { background: var(--theme); border: 1px solid var(--border); border-radius: 6px; padding: 6px 16px; cursor: pointer; color: var(--primary); font-size: 0.9em; }
+.calendar-header .nav-btn:hover { background: var(--tertiary); }
+
+table.calendar { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table.calendar th { padding: 10px 0; font-weight: bold; font-size: 0.85em; color: var(--secondary); text-align: center; }
+table.calendar td { border: 1px solid var(--border); vertical-align: top; padding: 4px; height: 90px; width: 14.28%; cursor: pointer; transition: background 0.15s; position: relative; }
+table.calendar td:hover { background: var(--tertiary); }
+table.calendar td.other-month { opacity: 0.2; pointer-events: none; }
+table.calendar td.today { border-color: var(--primary); border-width: 2px; }
+table.calendar td .date-num { font-size: 0.8em; font-weight: 600; color: var(--secondary); padding: 2px; }
+table.calendar td.today .date-num { color: var(--primary); }
+table.calendar td .day-events { margin-top: 2px; }
+table.calendar td .event-dot { font-size: 0.65em; padding: 1px 4px; margin: 2px 0; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; color: #fff; }
+.event-dot.考试 { background: #e74c3c; }
+.event-dot.会议 { background: #3498db; }
+.event-dot.约会 { background: #9b59b6; }
+.event-dot.提醒 { background: #f39c12; }
+.event-dot.其他 { background: #2ecc71; }
+
+#day-detail { margin-top: 24px; border: 1px solid var(--border); border-radius: 10px; padding: 20px; background: var(--entry); display: none; }
+#day-detail .day-title { font-size: 1.2em; font-weight: bold; margin-bottom: 12px; }
+#day-detail .detail-event { padding: 12px 0; border-bottom: 1px solid var(--border); }
+#day-detail .detail-event:last-child { border-bottom: none; }
+#day-detail .detail-event .time { font-size: 0.85em; color: var(--secondary); }
+#day-detail .detail-event .title { font-size: 1.05em; font-weight: 600; margin: 4px 0; }
+#day-detail .detail-event .meta { font-size: 0.85em; color: var(--secondary); }
+.no-events-msg { color: var(--secondary); font-style: italic; }
+
+.all-upcoming { margin-top: 32px; }
+.all-upcoming h3 { font-size: 1.1em; margin-bottom: 10px; }
+.upcoming-list { display: flex; flex-direction: column; gap: 8px; }
+.upcoming-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--entry); }
+.upcoming-item .date-badge { display: flex; flex-direction: column; align-items: center; min-width: 48px; }
+.upcoming-item .date-badge .month-day { font-size: 1.1em; font-weight: bold; }
+.upcoming-item .date-badge .weekday { font-size: 0.7em; color: var(--secondary); }
+.upcoming-item .info { flex: 1; }
+.upcoming-item .info .event-title { font-weight: 600; }
+.upcoming-item .info .event-meta { font-size: 0.8em; color: var(--secondary); margin-top: 2px; }
+.upcoming-item .type-badge { font-size: 0.75em; padding: 2px 8px; border-radius: 10px; color: #fff; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  table.calendar td { height: 60px; padding: 2px; font-size: 0.8em; }
+  table.calendar td .event-dot { font-size: 0.55em; }
+  .upcoming-item { flex-wrap: wrap; }
+}
+</style>
 </head>
 <body>
   <header class="page-header">
@@ -36,101 +61,163 @@
     <h1>{{ .Title }}</h1>
   </header>
 
-  <div class="calendar-page">
-    {{ $now := now }}
-    {{ $currentMonth := $now.Month }}
-    {{ $currentYear := $now.Year }}
-    {{ $today := $now.Day }}
+  {{ $now := now }}
+  {{ $currentMonth := $now.Month }}
+  {{ $currentYear := $now.Year }}
+  {{ $today := $now.Day }}
 
-    {{ $firstOfMonth := time (printf "%d-%02d-01" $currentYear $currentMonth) }}
-    {{ $weekday := $firstOfMonth.Weekday }}
-    {{ $daysInMonth := 31 }}
-    {{ if in (slice 4 6 9 11) (int $currentMonth) }}{{ $daysInMonth = 30 }}
-    {{ else if eq (int $currentMonth) 2 }}
-      {{ if and (eq (mod $currentYear 4) 0) (or (ne (mod $currentYear 100) 0) (eq (mod $currentYear 400) 0)) }}{{ $daysInMonth = 29 }}
-      {{ else }}{{ $daysInMonth = 28 }}{{ end }}
-    {{ end }}
+  {{ $firstOfMonth := time (printf "%d-%02d-01" $currentYear (int $currentMonth)) }}
+  {{ $weekday := $firstOfMonth.Weekday }}
+  {{ $daysInMonth := 31 }}
+  {{ if in (slice 4 6 9 11) (int $currentMonth) }}{{ $daysInMonth = 30 }}
+  {{ else if eq (int $currentMonth) 2 }}
+    {{ if and (eq (mod $currentYear 4) 0) (or (ne (mod $currentYear 100) 0) (eq (mod $currentYear 400) 0)) }}{{ $daysInMonth = 29 }}
+    {{ else }}{{ $daysInMonth = 28 }}{{ end }}
+  {{ end }}
 
-    {{ $prevMonthDays := 31 }}
-    {{ $prevMonth := sub (int $currentMonth) 1 }}
-    {{ if eq $prevMonth 0 }}{{ $prevMonth = 12 }}{{ end }}
-    {{ if in (slice 4 6 9 11) $prevMonth }}{{ $prevMonthDays = 30 }}
-    {{ else if eq $prevMonth 2 }}{{ $prevMonthDays = 28 }}{{ end }}
+  {{ $prevMonth := sub (int $currentMonth) 1 }}
+  {{ $prevYear := $currentYear }}
+  {{ if eq $prevMonth 0 }}{{ $prevMonth = 12 }}{{ $prevYear = sub $currentYear 1 }}{{ end }}
+  {{ $prevDaysInMonth := 31 }}
+  {{ if in (slice 4 6 9 11) $prevMonth }}{{ $prevDaysInMonth = 30 }}
+  {{ else if eq $prevMonth 2 }}
+    {{ if and (eq (mod $prevYear 4) 0) (or (ne (mod $prevYear 100) 0) (eq (mod $prevYear 400) 0)) }}{{ $prevDaysInMonth = 29 }}
+    {{ else }}{{ $prevDaysInMonth = 28 }}{{ end }}
+  {{ end }}
 
+  {{ $startDay := int $weekday }}
+  {{ if eq $startDay 0 }}{{ $startDay = 7 }}{{ end }}
+  {{ $totalCells := add $startDay $daysInMonth }}
+  {{ $rows := div (add $totalCells 6) 7 }}
+
+  <div class="calendar-wrap">
     <div class="calendar-header">
-      <div class="month-nav">
-        <span></span>
-        <h2>{{ $currentYear }}年{{ $currentMonth }}月</h2>
-        <span></span>
+      <span></span>
+      <h2>{{ $currentYear }} 年 {{ $currentMonth }} 月</h2>
+      <span></span>
+    </div>
+
+    <table class="calendar">
+      <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
+      {{ range $row := seq 0 (sub $rows 1) }}
+      <tr>
+        {{ range $col := seq 1 7 }}
+          {{ $cellIndex := add (mul $row 7) $col }}
+          {{ $dayNum := sub $cellIndex $startDay }}
+          {{ $class := "day" }}
+
+          {{ if lt $dayNum 1 }}
+            {{ $class = printf "day other-month" }}
+          {{ else if gt $dayNum $daysInMonth }}
+            {{ $class = printf "day other-month" }}
+          {{ else if eq $dayNum $today }}
+            {{ $class = printf "day today" }}
+          {{ end }}
+
+          {{ $displayDay := $dayNum }}
+          {{ if lt $dayNum 1 }}
+            {{ $displayDay = add $prevDaysInMonth $dayNum }}
+          {{ else if gt $dayNum $daysInMonth }}
+            {{ $displayDay = sub $dayNum $daysInMonth }}
+          {{ end }}
+
+          <td class="{{ $class }}" data-day="{{ $displayDay }}" data-month="{{ $currentMonth }}" data-year="{{ $currentYear }}" onclick="showDay(this)">
+            <div class="date-num">{{ $displayDay }}</div>
+            <div class="day-events">
+              {{ $dateStr := printf "%d-%02d-%02d" $currentYear (int $currentMonth) $dayNum }}
+              {{ range where $.Site.RegularPages "Section" "schedule" }}
+                {{ $ed := .Date.Format "2006-1-2" }}
+                {{ $ds := printf "%d-%d-%d" $currentYear $dayNum }}
+                {{ if eq $ed $ds }}
+                  <div class="event-dot {{ .Params.type | default "其他" }}" title="{{ .Title }}">{{ .Params.startTime }} {{ .Title }}</div>
+                {{ end }}
+              {{ end }}
+            </div>
+          </td>
+        {{ end }}
+      </tr>
+      {{ end }}
+    </table>
+
+    <!-- 点击显示的日程详情 -->
+    <div id="day-detail">
+      <div class="day-title" id="detail-title">📅 日程详情</div>
+      <div id="detail-content"></div>
+    </div>
+
+    <!-- 全部即将到来的日程 -->
+    <div class="all-upcoming">
+      <h3>📋 所有即将到来的安排</h3>
+      <div class="upcoming-list">
+        {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
+          <div class="upcoming-item" onclick="showDate('{{ .Date.Format "2006-01-02" }}')" style="cursor:pointer;">
+            <div class="date-badge">
+              <span class="month-day">{{ .Date.Format "01-02" }}</span>
+              <span class="weekday">{{ .Date.Format "周一" }}</span>
+            </div>
+            <span class="type-badge {{ .Params.type | default "其他" }}">{{ .Params.type | default "其他" }}</span>
+            <div class="info">
+              <div class="event-title">{{ .Title }}</div>
+              <div class="event-meta">{{ .Params.startTime }} - {{ .Params.endTime }} {{ with .Params.location }}· 📍 {{ . }}{{ end }}</div>
+            </div>
+          </div>
+        {{ else }}
+          <p style="color:var(--secondary);">暂无安排 ✅</p>
+        {{ end }}
       </div>
     </div>
-
-    <div class="calendar-grid">
-      {{ $dayNames := slice "日" "一" "二" "三" "四" "五" "六" }}
-      {{ range $dayNames }}
-        <div class="day-name">{{ . }}</div>
-      {{ end }}
-
-      {{ $startDay := int $weekday }}
-      {{ if eq $startDay 0 }}{{ $startDay = 7 }}{{ end }}
-      {{ $startPad := sub $startDay 1 }}
-
-      {{ range $i := seq 0 (sub (add $startPad $daysInMonth) 1) }}
-        {{ $dayNum := sub $i $startPad }}
-        {{ $class := "day" }}
-        {{ if lt $dayNum 0 }}
-          {{ $class = "day other-month" }}
-        {{ else if gt $dayNum $daysInMonth }}
-          {{ $class = "day other-month" }}
-        {{ else if and (eq $dayNum (sub $today 1)) }}
-          {{ $class = "day today" }}
-        {{ end }}
-
-        <div class="{{ $class }}">
-          <div class="date-num">
-            {{ if lt $dayNum 0 }}
-              {{ add $prevMonthDays $dayNum 1 }}
-            {{ else if ge $dayNum $daysInMonth }}
-              {{ sub $dayNum $daysInMonth 1 }}
-            {{ else }}
-              {{ add $dayNum 1 }}
-            {{ end }}
-          </div>
-
-          {{ $dateStr := printf "%d-%02d-%02d" $currentYear $currentMonth (add $dayNum 1) }}
-          {{ range where $.Site.RegularPages "Section" "schedule" }}
-            {{ $eventDate := .Date.Format "2006-01-02" }}
-            {{ if eq $eventDate $dateStr }}
-              <div class="event-item {{ .Params.type | default "其他" }}" title="{{ .Title }} - {{ .Params.startTime }}-{{ .Params.endTime }}">
-                {{ .Params.startTime }} {{ .Title }}
-              </div>
-            {{ end }}
-          {{ end }}
-        </div>
-      {{ end }}
-    </div>
-
-    <div class="event-detail">
-      <h3>📋 日程详情</h3>
-      {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
-        {{ if ge .Date $now }}
-        <div class="event-card">
-          <div class="time">📅 {{ .Date.Format "01-02" }} {{ .Params.startTime }} - {{ .Params.endTime }}</div>
-          <div class="title">{{ .Title }}</div>
-          <div class="meta">
-            {{ with .Params.type }}🏷️ {{ . }} {{ end }}
-            {{ with .Params.location }}📍 {{ . }} {{ end }}
-          </div>
-          <div class="content" style="margin-top:8px;font-size:0.9em;color:var(--content);">
-            {{ .Content }}
-          </div>
-        </div>
-        {{ end }}
-      {{ else }}
-        <p style="color:var(--secondary);">暂无私事安排 ✅</p>
-      {{ end }}
-    </div>
   </div>
+
+  <script>
+  const events = {
+    {{ range sort (where .Site.RegularPages "Section" "schedule") "Date" "asc" }}
+      "{{ .Date.Format "2006-01-02" }}": { title: "{{ .Title }}", start: "{{ .Params.startTime }}", end: "{{ .Params.endTime }}", type: "{{ .Params.type }}", location: "{{ .Params.location }}", content: {{ .Content | jsonify }} },
+    {{ end }}
+  };
+
+  function showDay(el) {
+    const day = el.dataset.day;
+    const month = String(el.dataset.month).padStart(2, '0');
+    const year = el.dataset.year;
+    const key = year + '-' + month + '-' + String(day).padStart(2, '0');
+    const detail = document.getElementById('day-detail');
+    const title = document.getElementById('detail-title');
+    const content = document.getElementById('detail-content');
+
+    title.textContent = '📅 ' + year + '年' + month + '月' + day + '日';
+    
+    if (events[key]) {
+      const e = events[key];
+      content.innerHTML = '<div class="detail-event">' +
+        '<div class="time">🕐 ' + e.start + ' - ' + e.end + '</div>' +
+        '<div class="title">' + e.title + '</div>' +
+        '<div class="meta">🏷️ ' + e.type + (e.location ? ' · 📍 ' + e.location : '') + '</div>' +
+        '<div style="margin-top:8px;font-size:0.9em;">' + e.content + '</div>' +
+        '</div>';
+    } else {
+      content.innerHTML = '<p class="no-events-msg">这一天暂无安排 ✅</p>';
+    }
+    detail.style.display = 'block';
+    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showDate(dateStr) {
+    // 找到对应日期的格子并点击
+    const cells = document.querySelectorAll('td.day:not(.other-month)');
+    for (const cell of cells) {
+      const y = cell.dataset.year;
+      const m = String(cell.dataset.month).padStart(2, '0');
+      const d = String(cell.dataset.day).padStart(2, '0');
+      if (y + '-' + m + '-' + d === dateStr) {
+        cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        cell.style.background = 'var(--tertiary)';
+        setTimeout(() => cell.style.background = '', 1500);
+        showDay(cell);
+        return;
+      }
+    }
+  }
+  </script>
 
   {{ partial "footer.html" . }}
 </body>

@@ -3,5 +3,6 @@
   {"date":"2026-05-10","desc":"购买云服务器","type":"支出","debit":"支出","credit":"银行存款","amount":100},
   {"date":"2026-05-10","desc":"充电桩退款","type":"收入","debit":"银行存款","credit":"收入","amount":1.99},
   {"date":"2026-05-11","desc":"生活费（工商银行）","type":"收入","debit":"银行存款","credit":"收入","amount":500},
-  {"date":"2026-05-11","desc":"午饭（鸡柳大人）","type":"支出","debit":"支出","credit":"银行存款","amount":27.9}
+  {"date":"2026-05-11","desc":"午饭（鸡柳大人）","type":"支出","debit":"支出","credit":"银行存款","amount":27.9},
+  {"date":"2026-05-11","desc":"打车","type":"支出","debit":"支出","credit":"银行存款","amount":28.9}
 ]

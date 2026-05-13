@@ -73,7 +73,7 @@ date: 2026-05-10
     
     var totalDebit = 0, totalCredit = 0;
     var accountBal = {};
-    var accounts = ['现金','银行存款','支付宝','微信','应收款','应付账款','收入','支出','投资','其他'];
+    var accounts = ['现金','银行存款','支付宝','微信','花呗','应收款','应付账款','收入','支出','投资','其他'];
     accounts.forEach(function(a) { accountBal[a] = 0; });
 
     entries.forEach(function(e) {

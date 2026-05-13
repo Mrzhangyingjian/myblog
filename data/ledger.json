@@ -10,7 +10,7 @@
   {"date":"2026-05-11","desc":"饮料（工商银行）","type":"支出","debit":"支出","credit":"银行存款","amount":7.9},
   {"date":"2026-05-12","desc":"购买云服务器（工商银行）","type":"支出","debit":"支出","credit":"银行存款","amount":18},
   {"date":"2026-05-12","desc":"元器件","type":"支出","debit":"支出","credit":"银行存款","amount":123.21},
-  {"date":"2026-05-12","desc":"吃饭","type":"支出","debit":"支出","credit":"应付账款","amount":197.8},
+  {"date":"2026-05-12","desc":"吃饭","type":"支出","debit":"支出","credit":"花呗","amount":197.8},
   {"date":"2026-05-12","desc":"打车","type":"支出","debit":"支出","credit":"银行存款","amount":20.5},
   {"date":"2026-05-12","desc":"美团","type":"支出","debit":"支出","credit":"银行存款","amount":40.2},
   {"date":"2026-05-13","desc":"咖啡","type":"支出","debit":"支出","credit":"银行存款","amount":53.6},
